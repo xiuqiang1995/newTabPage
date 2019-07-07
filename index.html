@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>新标签页</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <header></header>
+    <main>
+        <style>
+
+        </style>
+        <div class="wrapper" id='main'></div>
+    </main>
+    <footer></footer>
+    <script>
+        var keys = [
+            ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+            ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+            ['Z', 'X', 'C', 'V', 'B', 'N', 'M']
+        ]
+        var hash = {
+            'Q': 'qq.com',
+            'W': 'weibo.com',
+            'V': 'v2ex.com',
+            'Z': 'zhihu.com',
+            'I': 'iqiyi.com',
+            'O': 'opera.com',
+            'T': 'taobao.com',
+            'J': "jd.com",
+            'G': 'github.com'
+        }
+        //取出 localstorage 中的 hash
+        var hashInLocalStorage = JSON.parse(localStorage.getItem('hash') || 'null');
+        if (hashInLocalStorage) {
+            hash = hashInLocalStorage;
+        }
+        for (var i = 0; i < keys.length; i++) {
+            var div = document.createElement('div');
+            div.className = 'row';
+            for (var j = 0; j < keys[i].length; j++) {
+                var kbd = document.createElement('kbd');
+                kbd.className = 'key';
+                var qwe = keys[i][j];
+                kbd.textContent = qwe;
+                //btn
+                var btn = document.createElement('button');
+                btn.textContent = 'edit';
+                btn.id = qwe;
+                var img = document.createElement('img');
+                img.src='http://'+hash[qwe]+'/favicon.ico';
+                //编辑按钮的点击事件
+                btn.onclick = function (e) {
+                    var key = e['target']['id'].toUpperCase();
+                    var url = prompt('请输入一个地址');
+                    hash[key] = url;
+                    //hash持久化 防止页面关闭以后修改后的hash丢失
+                    localStorage.setItem('hash', JSON.stringify(hash));
+                }
+                kbd.appendChild(img); 
+                kbd.appendChild(btn);
+                div.appendChild(kbd);
+            }
+            main.appendChild(div);
+        }
+        //监听键盘点击事件
+        document.onkeypress = function (e) {
+            var key = e['key'];
+            var website = hash[key];
+            console.log(website);
+            //当前页面跳转
+            //location.href='http://'+website; 
+            //新标签页中打开
+            window.open('http://' + website, '_blank');
+        }
+    </script>
+</body>
+
+</html>
