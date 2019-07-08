@@ -19,6 +19,7 @@
     </main>
     <footer></footer>
     <script>
+        // init hash
         var keys = [
             ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
             ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
@@ -40,29 +41,61 @@
         if (hashInLocalStorage) {
             hash = hashInLocalStorage;
         }
+
+        function tag(tagName,attrs){
+            var element = document.createElement(tagName);
+            for(var key in attrs){
+                element[key] = attrs[key]
+            }
+            return element;
+        }
+
+        //生成键盘qwe...
         for (var i = 0; i < keys.length; i++) {
-            var div = document.createElement('div');
-            div.className = 'row';
+            //优化代码
+            //var div = document.createElement('div');
+            //div.className = 'row';
+            var div = tag('div',{className:'row'})
+            
             for (var j = 0; j < keys[i].length; j++) {
                 var kbd = document.createElement('kbd');
                 kbd.className = 'key';
                 var qwe = keys[i][j];
-                kbd.textContent = qwe;
+                //创建一个span，将字母放到span里，span放kbd里
+                var span = document.createElement('span');
+                span.textContent = qwe;
+                span.className = 'text';
+                kbd.appendChild(span);
                 //btn
                 var btn = document.createElement('button');
                 btn.textContent = 'edit';
                 btn.id = qwe;
                 var img = document.createElement('img');
-                img.src='http://'+hash[qwe]+'/favicon.ico';
+                if (hash[qwe]) {
+                    img.src = 'http://' + hash[qwe] + '/favicon.ico';
+                } else {
+                    img.src = '//i.loli.net/2019/07/08/5d233405b296529184.png';
+                }
+                img.onerror = function (e) {
+                    console.log('download failed');
+                    e.target.src = '//i.loli.net/2019/07/08/5d233405b296529184.png';
+                }
                 //编辑按钮的点击事件
                 btn.onclick = function (e) {
+                    var btn2 = e['target'];
+                    var img2 = btn2.previousSibling;
                     var key = e['target']['id'].toUpperCase();
                     var url = prompt('请输入一个地址');
                     hash[key] = url;
+                    //编辑后，将图片地址替换为新输入的地址对应的图标
+                    img2.src = 'http://' + url + '/favicon.ico';
+                    img2.onerror = function (e) {
+                        e.target.src = '//i.loli.net/2019/07/08/5d233405b296529184.png';
+                    }
                     //hash持久化 防止页面关闭以后修改后的hash丢失
                     localStorage.setItem('hash', JSON.stringify(hash));
                 }
-                kbd.appendChild(img); 
+                kbd.appendChild(img);
                 kbd.appendChild(btn);
                 div.appendChild(kbd);
             }
@@ -72,7 +105,6 @@
         document.onkeypress = function (e) {
             var key = e['key'];
             var website = hash[key];
-            console.log(website);
             //当前页面跳转
             //location.href='http://'+website; 
             //新标签页中打开
