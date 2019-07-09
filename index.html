@@ -56,11 +56,12 @@
             //var div = document.createElement('div');
             //div.className = 'row';
             var div = tag('div',{className:'row'})
-            
+
             for (var j = 0; j < keys[i].length; j++) {
                 var kbd = document.createElement('kbd');
                 kbd.className = 'key';
                 var qwe = keys[i][j];
+                console.log(qwe);
                 //创建一个span，将字母放到span里，span放kbd里
                 var span = document.createElement('span');
                 span.textContent = qwe;
@@ -103,8 +104,10 @@
         }
         //监听键盘点击事件
         document.onkeypress = function (e) {
-            var key = e['key'];
+            debugger;
+            var key = e['key'].toUpperCase();
             var website = hash[key];
+            console.log('website:'+website)
             //当前页面跳转
             //location.href='http://'+website; 
             //新标签页中打开
